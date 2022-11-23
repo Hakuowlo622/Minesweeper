@@ -5,6 +5,7 @@ const MEDIUM = { matSize: 8, mineTotal: 14 }//N x N -> 8x8=64 (14 mines)
 const HARD = { matSize: 12, mineTotal: 32 }//N x N -> 12x12=144 (32 mines)
 
 const BOMB = '💣'
+const FLAG = '🚩'
 
 var gBoard//mat
 var gGame = {//{}
@@ -50,7 +51,7 @@ function renderBoard(board) {
             else var className = 'empty'
 
 
-            strHTML += `\t<td id="${tdId}" data-i="${i}" data-j="${j}" class="cell ${className}" onclick="onCellClicked(this,${i},${j})" ${currCell}>\n`
+            strHTML += `\t<td id="${tdId}" data-i="${i}" data-j="${j}" class="cell ${className}" onmousedown="onCellClicked(event,this)" ${currCell}>\n`
 
 
 
@@ -62,25 +63,45 @@ function renderBoard(board) {
     elBoard.innerHTML = strHTML
 }
 
-//when cell clicked, either bomb appear.
-function onCellClicked(location, rowIdx, colIdx) {
-    // console.log('location', location)
-    // console.log('rowIdx', rowIdx)
-    // console.log('colIdx', colIdx)
+//when cell clicked....
+function onCellClicked(event, location) {
+    console.log('location', location)
+    console.log('event.button', event.button)//0=right click, 1=middle click, 2=left click
     console.log('location.classList', location.classList)
+
+    //TODO: clicked bomb cell
+/*You Lose!*/
+
+
+    //TODO: clicked empty cell
+/*runs find neighbor function and if no neighbor bombs, change cell style(??),*/
+/*if yes neighbor bombs, at each cell leave number corresponding to number of neighbor bombs */
+
+
+    //TODO: click right mouse button
+    //onmousedown="WhichButton(event,this)"?
+    //0=right click, 1=middle click, 2=left click
+    // if(location.classList[1]===BOMB&&event.button===2) { location.classList[1]===FLAG  /*remove from gBomb, if gBomb gets empty, you win!*/}
+    if (event.button===2) location.classList.add(FLAG)
+    console.log('location.classList', location.classList)
+
+
+
+
 
     renderCell(location, location.classList)
 
 }
 
-
+//NEED CHECKING AT A LATER POINT, IF NEED TO FIX THIS FUNCTION!
 // Convert a location object {i, j} to a selector and render a value in that element
 function renderCell(location, value) {
-    console.log('value.includes(BOMB)', value[0])
+    console.log('value[0]', value[0])
+    console.log('value[1]', value[1])
 
     const elCell = location
-    console.log('value', value)
-    console.log('location', location)
-    console.log('elCell', elCell)
+    // console.log('value', value)
+    // console.log('location', location)
+    // console.log('elCell', elCell)
     elCell.innerHTML = value
 }
