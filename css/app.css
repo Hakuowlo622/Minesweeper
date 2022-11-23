@@ -1,0 +1,26 @@
+
+table {
+
+    left: 600px;
+    top: 300px;
+    border-collapse: collapse;
+    background-color: gray;
+}
+
+
+table,
+tr,
+td {
+    text-align: center;
+    position:relative;
+    table-layout: fixed;
+    border: 1px solid black;
+    height: 30px;
+    width: 30px;
+    padding: 1px;
+
+
+    /* border-width: 10px; */
+
+    
+}
