@@ -1,8 +1,15 @@
+body {
+    text-align: center;
+}
+
+button {
+    position: relative;
+    top: 180px;
+}
 
 table {
-
-    left: 600px;
-    top: 300px;
+    left: 450px;
+    top: 200px;
     border-collapse: collapse;
     background-color: gray;
 }
@@ -12,7 +19,7 @@ table,
 tr,
 td {
     text-align: center;
-    position:relative;
+    position: relative;
     table-layout: fixed;
     border: 1px solid black;
     height: 30px;
@@ -22,5 +29,5 @@ td {
 
     /* border-width: 10px; */
 
-    
+
 }
