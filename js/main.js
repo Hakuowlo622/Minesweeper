@@ -20,21 +20,15 @@ var gTimerInterval
 
 
 function onInit(difficulty) {
+    gGame.isGameOn = true
     var elEnd = document.querySelector('.result')
     elEnd.innerText = ''
 
-    if (difficulty === 'EASY') {
-        clearInterval(gTimerInterval)
-        gGame.gameMode = EASY
-    }
-    if (difficulty === 'MEDIUM') {
-        clearInterval(gTimerInterval)
-        gGame.gameMode = MEDIUM
-    }
-    if (difficulty === 'HARD') {
-        clearInterval(gTimerInterval)
-        gGame.gameMode = HARD
-    }
+    if (difficulty === 'EASY') gGame.gameMode = EASY  
+    if (difficulty === 'MEDIUM') gGame.gameMode = MEDIUM 
+    if (difficulty === 'HARD') gGame.gameMode = HARD
+    
+    clearInterval(gTimerInterval)
 
     gBoard = createBoard()
     createBombs(gBoard)
