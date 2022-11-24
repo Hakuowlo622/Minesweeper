@@ -16,12 +16,13 @@ var gGame = {//{}
 }
 var gFlagsMetBombs = 0
 
+var gTimerInterval
 
 
 function onInit(difficulty) {
     var elEnd = document.querySelector('.result')
     elEnd.innerText = ''
-    
+
     if (difficulty === 'EASY') gGame.gameMode = EASY
     if (difficulty === 'MEDIUM') gGame.gameMode = MEDIUM
     if (difficulty === 'HARD') gGame.gameMode = HARD
@@ -30,7 +31,11 @@ function onInit(difficulty) {
     renderBombs(gBoard)
     console.log('gGame.gameMode', gGame.gameMode)
     renderBoard(gBoard)
-    gGame.isGameOn = true
+    console.log('gTimerInterval', gTimerInterval)
+    timer()
+    console.log('gTimerInterval', gTimerInterval)
+
+
 
 }
 
@@ -38,6 +43,8 @@ function onInit(difficulty) {
 function endGame(str) {
     gGame.isGameOn = false
     //clear intervals
+    clearInterval(gTimerInterval)
+    console.log('gTimerInterval', gTimerInterval)
     var elEnd = document.querySelector('.result')
     elEnd.innerText = str
 }
@@ -96,6 +103,7 @@ function onCellClicked(event, location) {
     // console.log('location.classList', location.classList)
     if (gGame.isGameOn === false) { }
     else {
+
 
 
     //TODO: clicked bomb cell
