@@ -11,6 +11,7 @@ function countNeighbors(location, board, neighbor) {
     var countNigs = 0
     // console.log('location.i', location.i)
     // console.log('location.j', location.j)
+
     var posIdxI=parseInt(location.i)
     var posIdxJ=parseInt(location.j)
     for (var i = posIdxI - 1; i <= posIdxI + 1; i++) {
@@ -18,6 +19,7 @@ function countNeighbors(location, board, neighbor) {
         for (var j = posIdxJ - 1; j <= posIdxJ + 1; j++) {
             if (i === posIdxI && j === posIdxJ) continue
             if (j < 0 || j >= board[0].length) continue
+
             if (board[i][j] === neighbor) {
                 countNigs++
             }

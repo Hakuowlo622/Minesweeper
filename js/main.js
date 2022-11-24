@@ -82,6 +82,12 @@ function renderBoard(board) {
 
 
 
+function countAroundNigs(position,board){
+console.log('position', position)
+console.log('board', board)
+
+}
+
 
 //when cell clicked....
 function onCellClicked(event, location) {
@@ -106,6 +112,11 @@ function onCellClicked(event, location) {
             var nigs = countNeighbors(location.dataset, gBoard, BOMB)
             location.innerText = nigs
             console.log('nigs', nigs)
+            var idxI = parseInt(location.dataset.i)
+            var idxJ = parseInt(location.dataset.j)
+            if (gBoard[idxI][idxJ] !== BOMB && gBoard[idxI][idxJ] === '') {
+                countAroundNigs({ I: idxI, J: idxJ }, gBoard)
+            }
         }
 
     }
