@@ -30,3 +30,10 @@ function renderBombs(board) {
         board[gBombs[i].i][gBombs[i].j] = BOMB
     }
 }
+
+function checkIfBomb(row, col) {
+    for (var counter = 0; counter < gBombs.length; counter++) {
+        if (gBombs[counter].i === row, gBombs[counter].j = col) return true
+    }
+    return false
+}

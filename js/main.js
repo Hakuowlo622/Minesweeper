@@ -14,10 +14,14 @@ var gGame = {//{}
     gameMode: EASY,
     isGameOn: true
 }
+var gFlagsMetBombs = 0
 
 
 
 function onInit(difficulty) {
+    var elEnd = document.querySelector('.result')
+    elEnd.innerText = ''
+    
     if (difficulty === 'EASY') gGame.gameMode = EASY
     if (difficulty === 'MEDIUM') gGame.gameMode = MEDIUM
     if (difficulty === 'HARD') gGame.gameMode = HARD
@@ -31,9 +35,11 @@ function onInit(difficulty) {
 }
 
 
-function endgame() {
+function endGame(str) {
     gGame.isGameOn = false
     //clear intervals
+    var elEnd = document.querySelector('.result')
+    elEnd.innerText = str
 }
 
 
@@ -82,72 +88,64 @@ function renderBoard(board) {
 
 
 
-function countAroundNigs(position,board){
-console.log('position', position)
-console.log('board', board)
-
-}
-
 
 //when cell clicked....
 function onCellClicked(event, location) {
     // console.log('location', location)
     // console.log('event.button', event.button)//0=right click, 1=middle click, 2=left click
     // console.log('location.classList', location.classList)
+    if (gGame.isGameOn === false) { }
+    else {
+
 
     //TODO: clicked bomb cell
     /*You Lose!*/if (event.button === 0) {
-        if (location.classList[1] === BOMB) {
-            renderCell(location, location.classList[1])
-            endgame()
+            if (location.classList[1] === BOMB) {
+                renderCell(location, location.classList[1])
+                endGame('You Lose')
 
-        }
-    }
-
-    //DONE: clicked empty cell
-    /*runs find neighbor function and if no neighbor bombs, change cell style(??),*/
-    /*if yes neighbor bombs, at each cell leave number corresponding to number of neighbor bombs */
-    if (event.button === 0) {
-        if (location.classList[1] === EMPTY) {
-            var nigs = countNeighbors(location.dataset, gBoard, BOMB)
-            location.innerText = nigs
-            console.log('nigs', nigs)
-            var idxI = parseInt(location.dataset.i)
-            var idxJ = parseInt(location.dataset.j)
-            if (gBoard[idxI][idxJ] !== BOMB && gBoard[idxI][idxJ] === '') {
-                countAroundNigs({ I: idxI, J: idxJ }, gBoard)
             }
         }
 
+        //DONE: clicked empty cell
+        /*runs find neighbor function and if no neighbor bombs, change cell style(??),*/
+        /*if yes neighbor bombs, at each cell leave number corresponding to number of neighbor bombs */
+        if (event.button === 0) {
+            if (location.classList[1] === EMPTY) {
+                var nigs = countNeighbors(location.dataset, gBoard, BOMB)
+                location.innerText = nigs
+                console.log('nigs', nigs)
+                var idxI = parseInt(location.dataset.i)
+                var idxJ = parseInt(location.dataset.j)
+
+            }
+
+        }
+
+
+        //TODO: click right mouse button
+        //onmousedown="WhichButton(event,this)"?
+        //0=right click, 1=middle click, 2=left click
+        if (location.classList[1] === BOMB && event.button === 2) {
+            /*remove from gBomb, if gBomb array of objects, gets empty, you win!*/
+            // location.classList[1] === FLAG
+            location.classList.add(FLAG)
+            renderCell(location, location.classList[3])
+            gFlagsMetBombs++
+            if (gFlagsMetBombs === gBombs.length) endGame('You Win')
+        }
+        if (event.button === 2) {
+            location.classList.add(FLAG)
+            // location.classList[1] === FLAG
+            renderCell(location, location.classList[2])
+        }
     }
-
-
-    //TODO: click right mouse button
-    //onmousedown="WhichButton(event,this)"?
-    //0=right click, 1=middle click, 2=left click
-    // if(location.classList[1]===BOMB&&event.button===2) { location.classList[1]===FLAG  /*remove from gBomb, if gBomb array of objects, gets empty, you win!*/}
-    if (event.button === 2) location.classList.add(FLAG)
-
-
-
-
-
-    // renderCell(location, location.classList)
-
 }
-
-
 
 
 //NEED CHECKING AT A LATER POINT, IF NEED TO FIX THIS FUNCTION!
 // Convert a location object {i, j} to a selector and render a value in that element
 function renderCell(location, value) {
-    console.log('value[0]', value[0])
-    console.log('value[1]', value[1])
-
     const elCell = location
-    // console.log('value', value)
-    // console.log('location', location)
-    // console.log('elCell', elCell)
     elCell.innerHTML = value
 }

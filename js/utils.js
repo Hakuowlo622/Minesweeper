@@ -9,6 +9,7 @@ function getClassName(location) {
 
 function countNeighbors(location, board, neighbor) {
     var countNigs = 0
+    // console.log('location', location)
     // console.log('location.i', location.i)
     // console.log('location.j', location.j)
 
@@ -31,7 +32,10 @@ function countNeighbors(location, board, neighbor) {
 
 
 
-
+function getCellLocation(iIdx,jIdx){
+var elId=document.getElementById(`cell-${iIdx}-${jIdx}`)
+return elId
+}
 
 
 
