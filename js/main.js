@@ -23,21 +23,28 @@ function onInit(difficulty) {
     var elEnd = document.querySelector('.result')
     elEnd.innerText = ''
 
-    if (difficulty === 'EASY') gGame.gameMode = EASY
-    if (difficulty === 'MEDIUM') gGame.gameMode = MEDIUM
-    if (difficulty === 'HARD') gGame.gameMode = HARD
+    if (difficulty === 'EASY') {
+        clearInterval(gTimerInterval)
+        gGame.gameMode = EASY
+    }
+    if (difficulty === 'MEDIUM') {
+        clearInterval(gTimerInterval)
+        gGame.gameMode = MEDIUM
+    }
+    if (difficulty === 'HARD') {
+        clearInterval(gTimerInterval)
+        gGame.gameMode = HARD
+    }
+
     gBoard = createBoard()
     createBombs(gBoard)
     renderBombs(gBoard)
-    console.log('gGame.gameMode', gGame.gameMode)
     renderBoard(gBoard)
-    console.log('gTimerInterval', gTimerInterval)
+
     timer()
-    console.log('gTimerInterval', gTimerInterval)
-
-
-
 }
+
+
 
 
 function endGame(str) {
@@ -74,7 +81,6 @@ function renderBoard(board) {
         for (var j = 0; j < board[0].length; j++) {
             const currCell = board[i][j]
 
-            // console.log('currCell', currCell)
             var tdId = `cell-${i}-${j}`
 
             //set className!
@@ -106,7 +112,7 @@ function onCellClicked(event, location) {
 
 
 
-    //TODO: clicked bomb cell
+    //DONE: clicked bomb cell
     /*You Lose!*/if (event.button === 0) {
             if (location.classList[1] === BOMB) {
                 renderCell(location, location.classList[1])
@@ -131,7 +137,7 @@ function onCellClicked(event, location) {
         }
 
 
-        //TODO: click right mouse button
+        //DONE: click right mouse button
         //onmousedown="WhichButton(event,this)"?
         //0=right click, 1=middle click, 2=left click
         if (location.classList[1] === BOMB && event.button === 2) {
@@ -151,7 +157,6 @@ function onCellClicked(event, location) {
 }
 
 
-//NEED CHECKING AT A LATER POINT, IF NEED TO FIX THIS FUNCTION!
 // Convert a location object {i, j} to a selector and render a value in that element
 function renderCell(location, value) {
     const elCell = location

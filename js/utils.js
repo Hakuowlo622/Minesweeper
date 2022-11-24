@@ -1,10 +1,5 @@
 'use strict'
 
-// Returns the class name for a specific cell
-function getClassName(location) {
-    const cellClass = 'cell-' + location.i + '-' + location.j
-    return cellClass
-}
 
 
 function countNeighbors(location, board, neighbor) {
@@ -13,8 +8,8 @@ function countNeighbors(location, board, neighbor) {
     // console.log('location.i', location.i)
     // console.log('location.j', location.j)
 
-    var posIdxI=parseInt(location.i)
-    var posIdxJ=parseInt(location.j)
+    var posIdxI = parseInt(location.i)
+    var posIdxJ = parseInt(location.j)
     for (var i = posIdxI - 1; i <= posIdxI + 1; i++) {
         if (i < 0 || i >= board.length) continue
         for (var j = posIdxJ - 1; j <= posIdxJ + 1; j++) {
@@ -30,12 +25,6 @@ function countNeighbors(location, board, neighbor) {
     return countNigs
 }
 
-
-
-function getCellLocation(iIdx,jIdx){
-var elId=document.getElementById(`cell-${iIdx}-${jIdx}`)
-return elId
-}
 
 
 
@@ -66,10 +55,6 @@ function timer() {
     gTimerInterval = setInterval(function () {
         var currTs = Date.now()
         var secs = parseInt((currTs - start) / 1000)
-        var ms = (currTs - start) - secs * 1000
-        ms = '000' + ms
-        ms = ms.substring(ms.length - 2, ms.length)
-
         timer.innerText = `\n ${secs}`
     }, 100)
 }
