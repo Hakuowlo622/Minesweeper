@@ -26,6 +26,10 @@ function countNeighbors(location, board, neighbor) {
 }
 
 
+function getCellLocation(iIdx, jIdx) {
+    var elId = document.getElementById(`cell-${iIdx}-${jIdx}`)
+    return elId
+}
 
 
 //return num between min max, including both

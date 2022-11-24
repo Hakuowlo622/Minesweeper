@@ -24,10 +24,10 @@ function onInit(difficulty) {
     var elEnd = document.querySelector('.result')
     elEnd.innerText = ''
 
-    if (difficulty === 'EASY') gGame.gameMode = EASY  
-    if (difficulty === 'MEDIUM') gGame.gameMode = MEDIUM 
+    if (difficulty === 'EASY') gGame.gameMode = EASY
+    if (difficulty === 'MEDIUM') gGame.gameMode = MEDIUM
     if (difficulty === 'HARD') gGame.gameMode = HARD
-    
+
     clearInterval(gTimerInterval)
 
     gBoard = createBoard()
@@ -94,6 +94,39 @@ function renderBoard(board) {
 }
 
 
+function cellZeroNigsCheck(location, board, idxI, idxJ) {
+    console.log('location', location)
+    var nigs
+    var currI = parseInt(location.dataset.i)
+    var currJ = parseInt(location.dataset.j)
+    var cell
+
+
+
+    for (var i = currI - 1; i < currI + 2; i++) {
+        if (i < 0 || i >= board.length) continue
+        for (var j = currJ - 1; j < currJ + 2; j++) {
+            if (j < 0 || j >= board[0].length) continue
+            else if (i === idxI && j === idxJ) continue
+            else {
+                cell = getCellLocation(i, j)
+                // cell.className='checked'
+                cell.style.backgroundColor='lightGrey'
+                // console.log('cell', cell)
+                nigs = countNeighbors({ i: i, j: j }, board, BOMB)
+                // console.log('nigs', nigs)
+                cell.innerText = nigs
+                console.log('cell.className', cell.className)
+                
+                // if (nigs === 0&&cell.className!=='checked') cellZeroNigsCheck(cell, board, idxI + i, idxJ + j)
+            }
+
+        }
+    }
+
+}
+
+
 
 
 //when cell clicked....
@@ -122,9 +155,12 @@ function onCellClicked(event, location) {
             if (location.classList[1] === EMPTY) {
                 var nigs = countNeighbors(location.dataset, gBoard, BOMB)
                 location.innerText = nigs
+                location.style.backgroundColor='lightGrey'
                 console.log('nigs', nigs)
                 var idxI = parseInt(location.dataset.i)
                 var idxJ = parseInt(location.dataset.j)
+
+                if (nigs === 0) cellZeroNigsCheck(location, gBoard, idxI, idxJ)
 
             }
 
@@ -156,3 +192,4 @@ function renderCell(location, value) {
     const elCell = location
     elCell.innerHTML = value
 }
+
