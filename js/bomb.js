@@ -37,3 +37,7 @@ function checkIfBomb(row, col) {
     }
     return false
 }
+
+function clearBombs(amount){
+    gBombs.splice(0,amount)
+}

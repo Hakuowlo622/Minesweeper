@@ -45,6 +45,7 @@ function endGame(str) {
     gGame.isGameOn = false
     //clear intervals
     clearInterval(gTimerInterval)
+    clearBombs(gGame.gameMode.mineTotal)
 
     var elResult = document.querySelector('.result')
     elResult.innerText = str
