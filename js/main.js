@@ -7,7 +7,8 @@ const HARD = { matSize: 12, mineTotal: 32 }//N x N -> 12x12=144 (32 mines)
 const BOMB = '💣'
 const FLAG = '🚩'
 const START = '😀'
-const END = '😥'
+const LOSE = '😥'
+const WIN = '😎'
 const EMPTY = 'empty'
 
 var gBoard//mat
@@ -23,11 +24,11 @@ var gTimerInterval
 
 function onInit() {
     gGame.isGameOn = true
-    
+
     var elResult = document.querySelector('.result')
     elResult.innerText = '\n'
-    var elStartEmoji=document.querySelector('.restart')
-    elStartEmoji.innerText=START
+    var elStartEmoji = document.querySelector('.restart')
+    elStartEmoji.innerText = START
 
     clearInterval(gTimerInterval)
 
@@ -44,11 +45,13 @@ function endGame(str) {
     gGame.isGameOn = false
     //clear intervals
     clearInterval(gTimerInterval)
-    console.log('gTimerInterval', gTimerInterval)
+
     var elResult = document.querySelector('.result')
     elResult.innerText = str
-    var elStartEmoji=document.querySelector('.restart')
-    elStartEmoji.innerText=END
+    var elStartEmoji = document.querySelector('.restart')
+
+    if (str === 'You Lose') elStartEmoji.innerText = LOSE
+    else elStartEmoji.innerText = WIN
 }
 
 function difficultySet(difficulty) {
@@ -102,8 +105,6 @@ function renderBoard(board) {
 function cellZeroNigsCheck(event, idxI, idxJ) {
     // console.log('location', location)
 
-
-
     for (var i = idxI - 1; i < idxI + 2; i++) {
         if (i < 0 || i >= gBoard.length) continue
         for (var j = idxJ - 1; j < idxJ + 2; j++) {
@@ -154,7 +155,9 @@ function onCellClicked(event, location) {
                 console.log('nigs', nigs)
 
                 if (nigs === 0) cellZeroNigsCheck(event, idxI, idxJ)
+                if (gCountClicked(gBoard) + gGame.gameMode.mineTotal === gGame.gameMode.matSize ** 2)  endGame('You Win')         
             }
+
         }
 
         //DONE: click right mouse button
@@ -170,12 +173,13 @@ function onCellClicked(event, location) {
                 gFlagsMetBombs++
                 location.classList.add(FLAG)
                 renderCell(location, location.classList[2])
-                if (gFlagsMetBombs === gBombs.length) endGame('You Win')
+                if (gFlagsMetBombs === gGame.gameMode.mineTotal) endGame('You Win')
             }
             else {
                 location.classList.add(FLAG)
                 renderCell(location, location.classList[2])
             }
+
         }
     }
 }

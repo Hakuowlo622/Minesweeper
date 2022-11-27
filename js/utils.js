@@ -2,12 +2,10 @@
 
 
 
+//recieves position as {i:i,j:j}, board, and the neighbor you must find
+//returns amount of neighbors AROUND! the position
 function countNeighbors(position, board, neighbor) {
     var countNigs = 0
-    // console.log('location', location)
-    // console.log('location.i', location.i)
-    // console.log('location.j', location.j)
-
     var posIdxI = parseInt(position.i)
     var posIdxJ = parseInt(position.j)
     for (var i = posIdxI - 1; i <= posIdxI + 1; i++) {
@@ -15,19 +13,19 @@ function countNeighbors(position, board, neighbor) {
         for (var j = posIdxJ - 1; j <= posIdxJ + 1; j++) {
             if (i === posIdxI && j === posIdxJ) continue
             if (j < 0 || j >= board[0].length) continue
-
             if (board[i][j] === neighbor) {
                 countNigs++
             }
-            // console.log('i,j', i, j)
         }
     }
     return countNigs
 }
 
-
-function getCellLocationById(iIdx, jIdx) {
-    var elId = document.getElementById(`cell-${iIdx}-${jIdx}`)
+//recieves row Index(idxI) and col Index(idxJ)
+//finds index in ID inside table
+//return location
+function getCellLocationById(idxI, idxJ) {
+    var elId = document.getElementById(`cell-${idxI}-${idxJ}`)
     return elId
 }
 
@@ -42,6 +40,7 @@ function gRandomIntInclusive(min, max) {
 
 
 //get empty cells from board
+//return array of indexes with [{i,j},{i,j},...] of empty cells
 function gEmptyCells(board) {
     var posArray = []
     for (var i = 0; i < board.length; i++) {
@@ -63,6 +62,21 @@ function timer() {
     }, 100)
 }
 
+
+
+
+//counts amount of clicked in board
+//return amount
+function gCountClicked(board) {
+    var objectCounter = 0
+    for (var i = 0; i < board.length; i++) {
+        for (var j = 0; j < board[0].length; j++) {
+            var elCell = getCellLocationById(i, j)
+            if (elCell.dataset.clicked==='true') objectCounter++
+        }
+    }
+    return objectCounter
+}
 
 
 

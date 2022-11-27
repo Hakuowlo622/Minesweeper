@@ -5,15 +5,21 @@ body {
 }
 
 .restart {
-border-radius: 300px;
+    background-color: rgb(206, 232, 232);
+    border: none;
+    border-radius: 300px;
+    font-size: 30px;
+}
+.restart:hover{
+    background-color: rgb(255, 255, 255);
 }
 
-.result{
-    color:red;
+.result {
+    color: red;
     font-size: 50px;
     margin-top: -10px;
-    margin-bottom:-5px;
-    
+    margin-bottom: -10px;
+
 }
 
 button {
@@ -28,6 +34,7 @@ table {
 
     /*puts table in middle*/
     margin-left: auto;
+    
     margin-right: auto;
     /**/
 
