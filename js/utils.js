@@ -2,14 +2,14 @@
 
 
 
-function countNeighbors(location, board, neighbor) {
+function countNeighbors(position, board, neighbor) {
     var countNigs = 0
     // console.log('location', location)
     // console.log('location.i', location.i)
     // console.log('location.j', location.j)
 
-    var posIdxI = parseInt(location.i)
-    var posIdxJ = parseInt(location.j)
+    var posIdxI = parseInt(position.i)
+    var posIdxJ = parseInt(position.j)
     for (var i = posIdxI - 1; i <= posIdxI + 1; i++) {
         if (i < 0 || i >= board.length) continue
         for (var j = posIdxJ - 1; j <= posIdxJ + 1; j++) {
@@ -26,7 +26,7 @@ function countNeighbors(location, board, neighbor) {
 }
 
 
-function getCellLocation(iIdx, jIdx) {
+function getCellLocationById(iIdx, jIdx) {
     var elId = document.getElementById(`cell-${iIdx}-${jIdx}`)
     return elId
 }
