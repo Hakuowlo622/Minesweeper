@@ -9,185 +9,140 @@ const FLAG = '🚩'
 const START = '😀'
 const LOSE = '😥'
 const WIN = '😎'
-const EMPTY = 'empty'
 
-var gBoard//mat
-var gGame = {//{}
-    location: {},
+// gBoard[i][j] = {
+//     isBomb: false,
+//     isFlag: false,
+//     isClicked: false,
+//     neighborBombs: null
+// }
+
+var gBoard
+var gGame = {
     gameMode: EASY,
-    isGameOn: true,
+    isGameOn: false,
+    timerInterval: null,
+    bombsToFlagRemain: null,
+    flagsRemain: null,
+    livesRemain: null
 }
-var gFlagsMetBombs = 0
 
-var gTimerInterval
-
+////TODO: COLOR NUMBERS
 
 function onInit() {
     gGame.isGameOn = true
+    gGame.bombsToFlagRemain = gGame.gameMode.mineTotal
+    gGame.flagsRemain = gGame.gameMode.mineTotal
+    gBoard = createSquareBoard(gGame.gameMode.matSize)
+    createBombs(gGame, gBoard)
+    setBombCountAroundCell(gBoard)
+    // console.log('gBoard', gBoard)
 
-    var elResult = document.querySelector('.result')
-    elResult.innerText = '\n'
-    var elStartEmoji = document.querySelector('.restart')
-    elStartEmoji.innerText = START
-
-    clearInterval(gTimerInterval)
-
-    gBoard = createBoard()
-    createBombs(gBoard)
-    renderBombs(gBoard)
     renderBoard(gBoard)
+    displayResult()
+    renderFlagsRemain(gGame.flagsRemain)
 
-    timer()
+}
+
+//when cell clicked....
+function onCellClicked(event, elCell) {
+    // console.log('elCell', elCell)
+    // console.log('event.button', event.button)//0=left click, 1=middle click, 2=right click
+    if (!gGame.isGameOn) return
+    else {
+        var currPos = gPosFromId(elCell)
+        // console.log('currPos', currPos)
+        if (event.button === 0) {
+            if (gBoard[currPos.i][currPos.j].isBomb) {
+
+                ////TODO: Lives Remain////
+                //renderLivesRemain(amount)
+                renderCell(elCell, BOMB)
+                gameOver('You Lose')
+            }
+            else if (gBoard[currPos.i][currPos.j].isFlag) return
+            else cellReveal(currPos)
+        }
+        if (event.button === 2 && !gBoard[currPos.i][currPos.j].isClicked) {
+            if (!gBoard[currPos.i][currPos.j].isFlag) {
+                if (gGame.flagsRemain > 0) {
+                    gBoard[currPos.i][currPos.j].isFlag = true
+                    renderCell(elCell, FLAG)
+                    renderFlagsRemain(--gGame.flagsRemain)
+                    if (gBoard[currPos.i][currPos.j].isBomb) gGame.bombsToFlagRemain--
+                    if (gGame.bombsToFlagRemain === 0) gameOver('You Win')
+                }
+            }
+            else {
+                gBoard[currPos.i][currPos.j].isFlag = false
+                renderCell(elCell, '')
+                renderFlagsRemain(++gGame.flagsRemain)
+                if (gBoard[currPos.i][currPos.j].isBomb) gGame.bombsToFlagRemain++
+            }
+        }
+    }
 }
 
 
-function endGame(str) {
+function cellReveal(currPos) {
+    if (gBoard[currPos.i][currPos.j].isClicked) return
+    var elCell = gCellFromId(currPos.i, currPos.j)
+    console.log('elCell', elCell)
+    // console.log(`gBoard[${currPos.i}][${currPos.j}].neighborBombs`, gBoard[currPos.i][currPos.j].neighborBombs)
+    elCell.style.backgroundColor = 'lightgray'
+    if (gBoard[currPos.i][currPos.j].neighborBombs === 0 && !gBoard[currPos.i][currPos.j].isClicked) cellRevealRunner(currPos)
+    else renderCell(elCell, gBoard[currPos.i][currPos.j].neighborBombs)
+    gBoard[currPos.i][currPos.j].isClicked = true
+}
+
+function cellRevealRunner(currPos) {
+    gBoard[currPos.i][currPos.j].isClicked = true
+    for (var i = currPos.i - 1; i <= currPos.i + 1; i++) {
+        if (i < 0 || i >= gBoard.length) continue
+        for (var j = currPos.j - 1; j <= currPos.j + 1; j++) {
+            if (i === currPos.i && j === currPos.j) continue
+            if (j < 0 || j >= gBoard[0].length) continue
+            cellReveal({ i: i, j: j })
+        }
+    }
+
+}
+
+
+function gameOver(str) {
     gGame.isGameOn = false
-    //clear intervals
-    clearInterval(gTimerInterval)
-    clearBombs(gGame.gameMode.mineTotal)
-
-    var elResult = document.querySelector('.result')
-    elResult.innerText = str
-    var elStartEmoji = document.querySelector('.restart')
-
-    if (str === 'You Lose') elStartEmoji.innerText = LOSE
-    else elStartEmoji.innerText = WIN
+    displayResult(str)//displays result of game
+    gGame.timerInterval = null
 }
 
-function difficultySet(difficulty) {
-    if (difficulty === 'EASY') gGame.gameMode = EASY
-    if (difficulty === 'MEDIUM') gGame.gameMode = MEDIUM
-    if (difficulty === 'HARD') gGame.gameMode = HARD
+
+function restart(str) {
+    gGame.timerInterval = null
+    displayResult()//hides last game result
+    if (str === 'EASY') gGame.gameMode = EASY
+    if (str === 'MEDIUM') gGame.gameMode = MEDIUM
+    if (str === 'HARD') gGame.gameMode = HARD
     onInit()
 }
 
 
-function createBoard() {
-    var board = []
-    for (var i = 0; i < gGame.gameMode.matSize > 0; i++) {
-        board.push([])
-        for (var j = 0; j < gGame.gameMode.matSize > 0; j++) {
-            board[i][j] = ''
-        }
-    }
-    console.table('board', board)
-    return board
+function displayResult(str = 'Hidden Text') {
+    var elResult = document.querySelector('.result')
+    if (str === 'Hidden Text') elResult.style.visibility = 'hidden'
+    else elResult.style.visibility = 'visible'
+    elResult.innerText = str
+}
+
+function renderFlagsRemain(amount) {
+    const elRemainingFlags = document.querySelector('.my-flags')
+    var flagsStr = `(${amount} flags left)`
+    for (var i = 0; i < amount; i++) flagsStr += FLAG
+    elRemainingFlags.innerHTML = flagsStr
+}
+
+function renderLivesRemain(amount) {
+
 }
 
 
-// Render the board to an HTML table
-function renderBoard(board) {
-    const elBoard = document.querySelector('.board')
-    var strHTML = ''
-    for (var i = 0; i < board.length; i++) {
-        strHTML += '<tr>\n'
-        for (var j = 0; j < board[0].length; j++) {
-            const currCell = board[i][j]
-            var tdId = `cell-${i}-${j}`
-
-            //set className!
-            if (currCell === BOMB) var className = BOMB
-            else var className = EMPTY
-
-
-            strHTML += `\t<td id="${tdId}" data-clicked="false" class="cell ${className}" onmousedown="onCellClicked(event,this)" ${currCell}>\n`
-
-
-            strHTML += '\t</td>\n'
-        }
-        strHTML += '</tr>\n'
-    }
-    // console.log(strHTML)
-    elBoard.innerHTML = strHTML
-}
-
-
-function cellZeroNigsCheck(event, idxI, idxJ) {
-    // console.log('location', location)
-
-    for (var i = idxI - 1; i < idxI + 2; i++) {
-        if (i < 0 || i >= gBoard.length) continue
-        for (var j = idxJ - 1; j < idxJ + 2; j++) {
-            if (j < 0 || j >= gBoard[0].length) continue
-            else if (i === idxI && j === idxJ) continue
-            else {
-                var cell = getCellLocationById(i, j)
-                if (cell.classList[1] !== BOMB && cell.dataset.clicked === 'false') {
-                    onCellClicked(event, cell)
-                }
-            }
-        }
-    }
-}
-
-
-
-
-//when cell clicked....
-function onCellClicked(event, location) {
-    // console.log('location', location)
-    // console.log('event.button', event.button)//0=right click, 1=middle click, 2=left click
-    // console.log('location.classList', location.classList)
-    if (gGame.isGameOn === false) { }
-    else {
-
-        //DONE: clicked bomb cell
-        /*You Lose!*/
-        if (event.button === 0) {
-            if (location.classList[1] === BOMB) {
-                renderCell(location, location.classList[1])
-                endGame('You Lose')
-            }
-
-            //DONE: clicked empty cell
-            /*runs find neighbor function and if no neighbor bombs, change cell style(??),*/
-            /*if yes neighbor bombs, at each cell leave number corresponding to number of neighbor bombs */
-            else if (location.classList[1] === EMPTY) {
-                var posIdArray = location.id.split('-')
-                var idxI = parseInt(posIdArray[1])
-                var idxJ = parseInt(posIdArray[2])
-                // console.log('idxI, idxJ', idxI, idxJ)
-
-                var nigs = countNeighbors({ i: idxI, j: idxJ }, gBoard, BOMB)//{i:i,j:j}
-                location.innerText = nigs
-                location.style.backgroundColor = 'lightGrey'
-                location.dataset.clicked = 'true'
-                console.log('nigs', nigs)
-
-                if (nigs === 0) cellZeroNigsCheck(event, idxI, idxJ)
-                if (gCountClicked(gBoard) + gGame.gameMode.mineTotal === gGame.gameMode.matSize ** 2)  endGame('You Win')         
-            }
-
-        }
-
-        //DONE: click right mouse button
-        //onmousedown="WhichButton(event,this)"?
-        //0=right click, 1=middle click, 2=left click
-        if (event.button === 2 && location.dataset.clicked === 'false') {
-            if (location.classList[2] === FLAG) {
-                if (location.classList[1] === BOMB) gFlagsMetBombs--
-                location.classList.remove(FLAG)
-                renderCell(location, '')
-            }
-            else if (location.classList[1] === BOMB) {
-                gFlagsMetBombs++
-                location.classList.add(FLAG)
-                renderCell(location, location.classList[2])
-                if (gFlagsMetBombs === gGame.gameMode.mineTotal) endGame('You Win')
-            }
-            else {
-                location.classList.add(FLAG)
-                renderCell(location, location.classList[2])
-            }
-
-        }
-    }
-}
-
-// Convert a location object {i, j} to a selector and render a value in that element
-function renderCell(location, value) {
-    const elCell = location
-    elCell.innerHTML = value
-}
 

@@ -12,21 +12,27 @@
 <body onload="onInit()">
 
     <h1>Minesweeper</h1>
-    <p class="result"></p>
+    <div class="result"></div>
 
-    <p class="timer">Timer:<span></span></p>
-<div>
-    <button class="restart" onclick="onInit()">Restart</button>
-</div>
-    <button onclick="difficultySet('EASY')">Easy</button>
-    <button onclick="difficultySet('MEDIUM')">Medium</button>
-    <button onclick="difficultySet('HARD')">Hard</button>
+    <div class="timer">Timer:<span></span></div>
+    
+    <div>
+        <button class="restart" onclick="restart()">Restart</button>
+    </div>
+
+    <button onclick="restart('EASY')">Easy</button>
+    <button onclick="restart('MEDIUM')">Medium</button>
+    <button onclick="restart('HARD')">Hard</button>
+
+    <div class="my-flags"></div>
+    <div class="my-lives"></div>
+
     <table class="board">
     </table>
 
+    <script src="js/utils.js"></script>
     <script src="js/bomb.js"></script>
     <script src="js/main.js"></script>
-    <script src="js/utils.js"></script>
 
     <footer>
         <p>Made by: Vlad Epov</p>

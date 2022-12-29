@@ -1,16 +1,18 @@
 body {
     text-align: center;
-    background-color: rgb(206, 232, 232);
-
+    background-color: rgb(5, 193, 193);
 }
 
 .restart {
-    background-color: rgb(206, 232, 232);
+    background-color: rgb(169, 222, 222);
     border: none;
-    border-radius: 300px;
-    font-size: 30px;
+    border-radius: 50%;
+    width: 100px;
+    height: 100px;
+    font-size: 25px;
 }
-.restart:hover{
+
+.restart:hover {
     background-color: rgb(255, 255, 255);
 }
 
@@ -19,25 +21,20 @@ body {
     font-size: 50px;
     margin-top: -10px;
     margin-bottom: -10px;
-
 }
 
 button {
     padding: 5px;
-    position: relative;
     margin-bottom: 20px;
 }
 
-table {
-    /* left: 450px;
-    top: 200px; */
 
+
+table {
     /*puts table in middle*/
     margin-left: auto;
-    
     margin-right: auto;
     /**/
-
     border-collapse: collapse;
     background-color: gray;
 }
@@ -46,11 +43,9 @@ table {
 table,
 tr,
 td {
-    text-align: center;
-    position: relative;
     table-layout: fixed;
     border: 1px solid black;
-    height: 30px;
+    height: 30px; 
     width: 30px;
     padding: 5px;
 
