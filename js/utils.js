@@ -90,11 +90,11 @@ function gCountNeighbors(board, position) {
 
 //counts amount of object in array
 //return amount
-function gCountIt(board, something) {
+function gCountIt(board) {
     var objectCounter = 0
     for (var i = 0; i < board.length; i++) {
         for (var j = 0; j < board[0].length; j++) {
-            if (board[i][j] === something) objectCounter++
+            if (board[i][j].isClicked) objectCounter++
         }
     }
     return objectCounter
@@ -125,7 +125,7 @@ function gCellFromId(idxI, idxJ) {
 function gPosFromId(elCell) {
     var cellPosStr = elCell.id
     var cellPosArr = cellPosStr.split('-')
-    return { i: cellPosArr[1], j: cellPosArr[2] }
+    return { i: parseInt(cellPosArr[1]), j: parseInt(cellPosArr[2]) }
 }
 
 //get empty cells from board

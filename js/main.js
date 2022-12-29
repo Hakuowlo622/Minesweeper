@@ -9,6 +9,7 @@ const FLAG = '🚩'
 const START = '😀'
 const LOSE = '😥'
 const WIN = '😎'
+const HINT = '💡'
 
 // gBoard[i][j] = {
 //     isBomb: false,
@@ -24,7 +25,9 @@ var gGame = {
     timerInterval: null,
     bombsToFlagRemain: null,
     flagsRemain: null,
-    livesRemain: null
+    livesRemain: null,
+    hintsRemain: null,
+    hintInUse: false
 }
 
 ////TODO: COLOR NUMBERS
@@ -33,6 +36,8 @@ function onInit() {
     gGame.isGameOn = true
     gGame.bombsToFlagRemain = gGame.gameMode.mineTotal
     gGame.flagsRemain = gGame.gameMode.mineTotal
+    gGame.livesRemain = 3
+    gGame.hintsRemain = 3
     gBoard = createSquareBoard(gGame.gameMode.matSize)
     createBombs(gGame, gBoard)
     setBombCountAroundCell(gBoard)
@@ -41,7 +46,8 @@ function onInit() {
     renderBoard(gBoard)
     displayResult()
     renderFlagsRemain(gGame.flagsRemain)
-
+    renderLivesRemain(gGame.livesRemain)
+    renderHintsRemain(gGame.hintsRemain)
 }
 
 //when cell clicked....
@@ -57,11 +63,15 @@ function onCellClicked(event, elCell) {
 
                 ////TODO: Lives Remain////
                 //renderLivesRemain(amount)
+                renderLivesRemain(--gGame.livesRemain)
                 renderCell(elCell, BOMB)
                 gameOver('You Lose')
             }
             else if (gBoard[currPos.i][currPos.j].isFlag) return
-            else cellReveal(currPos)
+            else {
+                cellReveal(currPos)
+                if(gCountIt(gBoard)+gGame.gameMode.mineTotal===gGame.gameMode.matSize*gGame.gameMode.matSize) gameOver('You Win')
+            }
         }
         if (event.button === 2 && !gBoard[currPos.i][currPos.j].isClicked) {
             if (!gBoard[currPos.i][currPos.j].isFlag) {
@@ -141,8 +151,21 @@ function renderFlagsRemain(amount) {
 }
 
 function renderLivesRemain(amount) {
-
+    const elRemainingLives = document.querySelector('.my-lives')
+    var livesStr = `(${amount} lives left)`
+    for (var i = 0; i < amount; i++) livesStr += BOMB
+    elRemainingLives.innerHTML = livesStr
 }
 
+function renderHintsRemain(amount) {
+    const elRemainingHints = document.querySelector('.my-hints')
+    var hintsStr = `(${amount} hints left)`
+    for (var i = 0; i < amount; i++) hintsStr += HINT
+    elRemainingHints.innerHTML = hintsStr
+}
 
+function hintReveal() {
+    if (gGame.hintsRemain > 0) gGame.hintInUse = true
+
+}
 
