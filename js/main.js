@@ -23,6 +23,7 @@ var gGame = {
     gameMode: EASY,
     isGameOn: false,
     timerInterval: null,
+    timerIsOn: false,
     bombsToFlagRemain: null,
     flagsRemain: null,
     livesRemain: null,
@@ -30,7 +31,6 @@ var gGame = {
     hintInUse: false
 }
 
-////TODO: COLOR NUMBERS
 
 function onInit() {
     gGame.isGameOn = true
@@ -43,8 +43,8 @@ function onInit() {
     setBombCountAroundCell(gBoard)
     // console.log('gBoard', gBoard)
 
+    renderRestartSmiley()
     renderBoard(gBoard)
-    displayResult()
     renderFlagsRemain(gGame.flagsRemain)
     renderLivesRemain(gGame.livesRemain)
     renderHintsRemain(gGame.hintsRemain)
@@ -54,11 +54,16 @@ function onInit() {
 function onCellClicked(event, elCell) {
     // console.log('elCell', elCell)
     // console.log('event.button', event.button)//0=left click, 1=middle click, 2=right click
-    if (!gGame.isGameOn) return
+
+    if (!gGame.isGameOn) return//if game is set to off, do nothing when cells clicked
     else {
+        if (!gGame.timerIsOn) {//STARTS timer ONLY when games is on, and STOPS when GAME OVER. Restarts only when game resets.
+            timer()
+            gGame.timerIsOn = true
+        }
         var currPos = gPosFromId(elCell)
         // console.log('currPos', currPos)
-        if (event.button === 0) {
+        if (event.button === 0) {//if left clicked
             if (gGame.hintInUse) {
                 gGame.isGameOn = false
                 tempHintReveal(currPos)
@@ -77,7 +82,7 @@ function onCellClicked(event, elCell) {
                 if (gCountIt(gBoard) + gGame.gameMode.mineTotal === gGame.gameMode.matSize * gGame.gameMode.matSize) gameOver('You Win')
             }
         }
-        if (event.button === 2 && !gBoard[currPos.i][currPos.j].isClicked) {
+        if (event.button === 2 && !gBoard[currPos.i][currPos.j].isClicked) {//if right clicked
             if (!gBoard[currPos.i][currPos.j].isFlag) {
                 if (gGame.flagsRemain > 0) {
                     gBoard[currPos.i][currPos.j].isFlag = true
@@ -109,8 +114,8 @@ function tempHintReveal(pos) {
                 if (gBoard[i][j].isBomb) renderCell(elCell, 'bomb')
                 else renderCell(elCell, gBoard[i][j].neighborBombs)
             }
-            
-            
+
+
         }
     }
     setTimeout(function () { hintClear(pos) }, 3000)
@@ -142,7 +147,10 @@ function cellReveal(currPos) {
     // console.log(`gBoard[${currPos.i}][${currPos.j}].neighborBombs`, gBoard[currPos.i][currPos.j].neighborBombs)
     elCell.style.backgroundColor = 'lightgray'
     if (gBoard[currPos.i][currPos.j].neighborBombs === 0 && !gBoard[currPos.i][currPos.j].isClicked) cellRevealRunner(currPos)
-    else renderCell(elCell, gBoard[currPos.i][currPos.j].neighborBombs)
+    else {
+        renderCell(elCell, gBoard[currPos.i][currPos.j].neighborBombs)
+        elCell.style.color = getMinesweeperNumColor(gBoard[currPos.i][currPos.j].neighborBombs)
+    }
     gBoard[currPos.i][currPos.j].isClicked = true
 }
 
@@ -162,14 +170,15 @@ function cellRevealRunner(currPos) {
 
 function gameOver(str) {
     gGame.isGameOn = false
-    displayResult(str)//displays result of game
+    renderRestartSmiley(str)
+    clearInterval(gGame.timerInterval)
     gGame.timerInterval = null
+    gGame.timerIsOn = false
 }
 
 
 function restart(str) {
     gGame.timerInterval = null
-    displayResult()//hides last game result
     if (str === 'EASY') gGame.gameMode = EASY
     if (str === 'MEDIUM') gGame.gameMode = MEDIUM
     if (str === 'HARD') gGame.gameMode = HARD
@@ -207,6 +216,13 @@ function renderHintsRemain(amount) {
 
 function hintReveal() {
     if (gGame.hintsRemain > 0) gGame.hintInUse = true
-
 }
 
+function renderRestartSmiley(str = 'default') {
+    var elClass = document.querySelector('.restart')
+    var smileyFace
+    if (str === 'default') smileyFace = START
+    if (str === 'You Win') smileyFace = WIN
+    if (str === 'You Lose') smileyFace = LOSE
+    elClass.innerHTML = smileyFace
+}

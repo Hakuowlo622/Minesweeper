@@ -9,7 +9,7 @@ body {
     border-radius: 50%;
     width: 100px;
     height: 100px;
-    font-size: 25px;
+    font-size: 50px;
 }
 
 .restart:hover {
@@ -28,7 +28,9 @@ button {
     margin-bottom: 20px;
 }
 
-
+.cell{
+    font-size: 20px;
+}
 
 table {
     /*puts table in middle*/

@@ -182,14 +182,14 @@ function gRandomIntInclusive(min, max) {
 function timer() {
     var timer = document.querySelector('.timer span')
     var start = Date.now()
-    gTimerInterval = setInterval(function () {
+    gGame.timerInterval = setInterval(function () {
         var currTs = Date.now()
         var secs = parseInt((currTs - start) / 1000)
         var ms = (currTs - start) - secs * 1000
         ms = '000' + ms
         ms = ms.substring(ms.length - 2, ms.length)
 
-        timer.innerText = `\n ${secs}:${ms}`
+        timer.innerText = `\t ${secs}:${ms}`
     }, 100)
 }
 
@@ -200,6 +200,19 @@ function getRandomColor() {
     for (var i = 0; i < 6; i++) {
         color += letters[Math.floor(Math.random() * 16)]
     }
+    return color
+}
+
+function getMinesweeperNumColor(num) {
+    var color
+    if (num === 1) color = 'blue'
+    if (num === 2) color = 'green'
+    if (num === 3) color = 'red'
+    if (num === 4) color = 'purple'
+    if (num === 5) color = 'maroon'
+    if (num === 6) color = 'turquoise'
+    if (num === 7) color = 'black'
+    if (num === 8) color = 'darkgray'
     return color
 }
 
