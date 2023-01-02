@@ -56,15 +56,18 @@ function renderBoard(board) {
     elBoard.innerHTML = strHTML
 }
 
-//Using the location of a Cell element, render a value in that element
-function renderCell(location, value) {
-    const elCell = location
-    elCell.innerHTML = value
 
-    /*Also:*/
-    // const cellSelector = '.' + getClassName(location) // cell-i-j
-    // const elCell = document.querySelector(cellSelector)
-    // elCell.innerHTML = value
+
+
+//Using the location of a Cell element, render a value in that element
+function renderCell(location, str = '') {
+    const elCell = location
+    var strValue = str
+
+    if (str === 'bomb') strValue = BOMB
+    if (str === 'flag') strValue = FLAG
+
+    elCell.innerHTML = strValue
 }
 
 

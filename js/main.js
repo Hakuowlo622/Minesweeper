@@ -59,25 +59,29 @@ function onCellClicked(event, elCell) {
         var currPos = gPosFromId(elCell)
         // console.log('currPos', currPos)
         if (event.button === 0) {
+            if (gGame.hintInUse) {
+                gGame.isGameOn = false
+                tempHintReveal(currPos)
+                renderHintsRemain(--gGame.hintsRemain)
+                return
+            }
             if (gBoard[currPos.i][currPos.j].isBomb) {
 
-                ////TODO: Lives Remain////
-                //renderLivesRemain(amount)
                 renderLivesRemain(--gGame.livesRemain)
-                renderCell(elCell, BOMB)
-                gameOver('You Lose')
+                renderCell(elCell, 'bomb')
+                if (gGame.livesRemain === 0) gameOver('You Lose')
             }
             else if (gBoard[currPos.i][currPos.j].isFlag) return
             else {
                 cellReveal(currPos)
-                if(gCountIt(gBoard)+gGame.gameMode.mineTotal===gGame.gameMode.matSize*gGame.gameMode.matSize) gameOver('You Win')
+                if (gCountIt(gBoard) + gGame.gameMode.mineTotal === gGame.gameMode.matSize * gGame.gameMode.matSize) gameOver('You Win')
             }
         }
         if (event.button === 2 && !gBoard[currPos.i][currPos.j].isClicked) {
             if (!gBoard[currPos.i][currPos.j].isFlag) {
                 if (gGame.flagsRemain > 0) {
                     gBoard[currPos.i][currPos.j].isFlag = true
-                    renderCell(elCell, FLAG)
+                    renderCell(elCell, 'flag')
                     renderFlagsRemain(--gGame.flagsRemain)
                     if (gBoard[currPos.i][currPos.j].isBomb) gGame.bombsToFlagRemain--
                     if (gGame.bombsToFlagRemain === 0) gameOver('You Win')
@@ -85,12 +89,49 @@ function onCellClicked(event, elCell) {
             }
             else {
                 gBoard[currPos.i][currPos.j].isFlag = false
-                renderCell(elCell, '')
+                renderCell(elCell)
                 renderFlagsRemain(++gGame.flagsRemain)
                 if (gBoard[currPos.i][currPos.j].isBomb) gGame.bombsToFlagRemain++
             }
         }
     }
+}
+
+
+function tempHintReveal(pos) {
+    for (var i = pos.i - 1; i <= pos.i + 1; i++) {
+        if (i < 0 || i >= gBoard.length) continue
+        for (var j = pos.j - 1; j <= pos.j + 1; j++) {
+            if (j < 0 || j >= gBoard[0].length) continue
+            if (!gBoard[i][j].isClicked) {
+                var elCell = gCellFromId(i, j)
+                elCell.style.backgroundColor = 'lightyellow'
+                if (gBoard[i][j].isBomb) renderCell(elCell, 'bomb')
+                else renderCell(elCell, gBoard[i][j].neighborBombs)
+            }
+            
+            
+        }
+    }
+    setTimeout(function () { hintClear(pos) }, 3000)
+}
+
+function hintClear(pos) {
+    for (var i = pos.i - 1; i <= pos.i + 1; i++) {
+        if (i < 0 || i >= gBoard.length) continue
+        for (var j = pos.j - 1; j <= pos.j + 1; j++) {
+            if (j < 0 || j >= gBoard[0].length) continue
+            if (!gBoard[i][j].isClicked) {
+                var elCell = gCellFromId(i, j)
+                elCell.removeAttribute('style')
+                if (gBoard[i][j].isFlag) renderCell(elCell, 'flag')
+                else renderCell(elCell)
+            }
+        }
+    }
+
+    gGame.isGameOn = true
+    gGame.hintInUse = false
 }
 
 
