@@ -3,19 +3,6 @@
 /////////////CREATE/////////////
 
 
-//creates an empty (numOfRows x numOfCols) board
-//returns the created board
-function createBoard(numOfRows, numOfCols) {
-    var board = []
-    for (var i = 0; i < numOfRows; i++) {
-        board.push([])
-        for (var j = 0; j < numOfCols; j++) {
-            // board[i][j] = 
-        }
-    }
-    return board
-}
-
 //creates an empty square (length x length) board
 //returns the created board
 function createSquareBoard(length) {
@@ -57,8 +44,6 @@ function renderBoard(board) {
 }
 
 
-
-
 //Using the location of a Cell element, render a value in that element
 function renderCell(location, str = '') {
     const elCell = location
@@ -71,12 +56,40 @@ function renderCell(location, str = '') {
 }
 
 
+function renderFlagsRemain(amount) {
+    const elRemainingFlags = document.querySelector('.my-flags')
+    var flagsStr = `(${amount} flags left)`
+    for (var i = 0; i < amount; i++) flagsStr += FLAG
+    elRemainingFlags.innerHTML = flagsStr
+}
+function renderLivesRemain(amount) {
+    const elRemainingLives = document.querySelector('.my-lives')
+    var livesStr = `(${amount} lives left)`
+    for (var i = 0; i < amount; i++) livesStr += BOMB
+    elRemainingLives.innerHTML = livesStr
+}
+function renderHintsRemain(amount) {
+    const elRemainingHints = document.querySelector('.my-hints')
+    var hintsStr = `(${amount} hints left)`
+    for (var i = 0; i < amount; i++) hintsStr += HINT
+    elRemainingHints.innerHTML = hintsStr
+}
+function renderRestartSmiley(str = 'default') {
+    var elClass = document.querySelector('.restart')
+    var smileyFace
+    if (str === 'default') smileyFace = START
+    if (str === 'You Win') smileyFace = WIN
+    if (str === 'You Lose') smileyFace = LOSE
+    elClass.innerHTML = smileyFace
+}
+
+
 //////////////////COUNTER//////////////////
 
 
 //gets position as {i:i,j:j}, board, and the neighbor you must find
 //returns amount of neighbors AROUND! the position
-function gCountNeighbors(board, position) {
+function gCountNeighborBombs(board, position) {
     var countNigs = 0
     var posIdxI = parseInt(position.i)
     var posIdxJ = parseInt(position.j)
@@ -93,7 +106,7 @@ function gCountNeighbors(board, position) {
 
 //counts amount of object in array
 //return amount
-function gCountIt(board) {
+function gCountClickedCells(board) {
     var objectCounter = 0
     for (var i = 0; i < board.length; i++) {
         for (var j = 0; j < board[0].length; j++) {
@@ -107,25 +120,16 @@ function gCountIt(board) {
 ////////////////////FINDER/////////////////////////
 
 
-//takes random number from an array of numbers, removes it from the array,
-//returns the chosen number
-function gDrawRandomNum(numsArray) {
-    var idx = gRandomIntInclusive(0, numsArray.length - 1)
-    var num = numsArray[idx]
-    numsArray.splice(idx, 1)
-    return num
-}
-
 //recieves row Index(idxI) and col Index(idxJ)
 //finds index in ID inside table
 //return Location Element
-function gCellFromId(idxI, idxJ) {
+function gCellElFromId(idxI, idxJ) {
     var elId = document.getElementById(`cell-${idxI}-${idxJ}`)
     return elId
 }
 
 // recieves cell element, with id="cell-i-j", returns Pos object {i:i,j:j}
-function gPosFromId(elCell) {
+function gPosFromCellElId(elCell) {
     var cellPosStr = elCell.id
     var cellPosArr = cellPosStr.split('-')
     return { i: parseInt(cellPosArr[1]), j: parseInt(cellPosArr[2]) }
@@ -133,7 +137,7 @@ function gPosFromId(elCell) {
 
 //get empty cells from board
 //return array of indexes with [{i:i,j:j},{i:i,j:j},...] of empty cells
-function gEmptyCellsArr(board) {
+function gEmptyCellsPosArr(board) {
     var posArray = []
     for (var i = 0; i < board.length; i++) {
         for (var j = 0; j < board[0].length; j++) {
@@ -144,32 +148,16 @@ function gEmptyCellsArr(board) {
 }
 
 //find an empty cell in board, and return its position like this {i,j}
-function gRandomEmptyCell(board) {
-    var emptyPosArray = gEmptyCellsArr(board)
+function gRandomEmptyCellPos(board) {
+    var emptyPosArray = gEmptyCellsPosArr(board)
     return emptyPosArray[gRandomIntInclusive(0, emptyPosArray.length - 1)]
 }
 
-// Returns the class name for a specific cell
-function gClassName(location) {
-    const cellClass = 'cell-' + location.i + '-' + location.j
-    return cellClass
-}
 
 
 //////////////////////////////////////////////////////////////////////////////////////////
 
 
-//shuffles int Num array
-function gShuffleArr(numArray) {
-    var numSortedArr = numArray.slice()
-    var numShffledArr = []
-    for (var i = 0, j = numArray.length; i < numArray.length; i++) {
-        var currRandom = gRandomIntInclusive(0, --j)//15
-        numShffledArr[i] = numSortedArr[currRandom]//numArray[15]=16
-        numSortedArr.splice(currRandom, 1)
-    }
-    return numShffledArr
-}
 
 //return num between min max, including both
 function gRandomIntInclusive(min, max) {
@@ -193,15 +181,6 @@ function timer() {
     }, 100)
 }
 
-//get a Random Color format #000000
-function getRandomColor() {
-    var letters = '0123456789ABCDEF'
-    var color = '#'
-    for (var i = 0; i < 6; i++) {
-        color += letters[Math.floor(Math.random() * 16)]
-    }
-    return color
-}
 
 function getMinesweeperNumColor(num) {
     var color
@@ -216,30 +195,6 @@ function getMinesweeperNumColor(num) {
     return color
 }
 
-//using Keyboard Arrows, find the next position affected
-//return it
-function getNextLocation(eventKeyboard) {
-    const nextPosition = {
-        i: gPacman.location.i,
-        j: gPacman.location.j
-    }
-    // DONE: figure out nextLocation
-    switch (eventKeyboard) {
-        case 'ArrowUp':
-            nextPosition.i--
-            break;
-        case 'ArrowRight':
-            nextPosition.j++
-            break;
-        case 'ArrowDown':
-            nextPosition.i++
-            break;
-        case 'ArrowLeft':
-            nextPosition.j--
-            break;
-    }
-    return nextPosition
-}
 
 //////////////////////////////////////////////////////////////////////////////////////////
 
